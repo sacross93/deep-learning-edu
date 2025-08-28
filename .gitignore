@@ -1,0 +1,34 @@
+# .gitignore
+@"
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.homevenv/
+.env
+.ipynb_checkpoints/
+
+# Editors/OS
+.vscode/
+.idea/
+.DS_Store
+.kiro
+.kiro/*
+
+# Builds
+build/
+dist/
+
+# DL artifacts (추적 비권장: 크고 민감함)
+data/
+datasets/
+outputs/
+runs/
+logs/
+wandb/
+checkpoints/
+models/
+*.pt
+*.pth
+*.ckpt
