@@ -104,6 +104,12 @@ pip install -r requirements.txt
 
 ## 🚀 실행 방법
 
+### 이론 학습
+각 주제의 이론 문서를 먼저 읽어보세요:
+- 마크다운 뷰어나 IDE에서 `*_theory.md` 파일들을 열어서 학습
+- 수학적 원리와 알고리즘 동작 과정을 이해한 후 실습 진행
+
+### 실습 코드 실행
 각 튜토리얼은 독립적으로 실행 가능합니다:
 
 ```bash
@@ -132,50 +138,111 @@ python 07_gan_image_generation.py
 python 08_transformer_nlp.py
 ```
 
+### 권장 학습 방법
+1. 📖 **이론 문서 읽기**: `XX_theory.md` 파일로 개념 학습
+2. 💻 **코드 분석**: 실습 파일의 주석과 구현 내용 이해
+3. 🔧 **코드 실행**: 실제로 실행해보며 결과 확인
+4. 🎯 **실험**: 하이퍼파라미터를 변경해보며 결과 비교
+
+## 📖 이론 설명서
+
+각 튜토리얼에는 상세한 이론 설명서가 포함되어 있습니다:
+
+### 이론 문서 목록
+- **01_pytorch_basics_theory.md**: PyTorch 프레임워크 기초 이론
+- **02_neural_networks_theory.md**: 신경망 구조와 학습 원리
+- **03_cnn_theory.md**: 합성곱 신경망 이론과 아키텍처
+- **04_rnn_theory.md**: 순환 신경망과 시퀀스 처리
+- **05_lstm_theory.md**: LSTM과 시계열 데이터 분석
+- **06_yolo_theory.md**: 객체 탐지 알고리즘과 YOLO
+- **07_gan_theory.md**: 생성적 적대 신경망 이론
+- **08_transformer_theory.md**: Transformer 아키텍처와 어텐션 메커니즘
+
+각 이론 문서는 다음 내용을 포함합니다:
+- 📚 **핵심 개념**: 기본 원리와 수학적 배경
+- 🔬 **상세 분석**: 알고리즘의 단계별 동작 과정
+- 💡 **실용적 팁**: 하이퍼파라미터 튜닝과 최적화 방법
+- 📊 **평가 메트릭**: 모델 성능 측정 방법
+- 🔍 **용어 정의**: 전문 용어와 파라미터 설명
+
 ## 📁 프로젝트 구조
 
 ```
 deep_learning_tutorials/
-├── 01_pytorch_basics.py          # PyTorch 기초
-├── 02_neural_networks.py         # 신경망 기초
-├── 03_cnn_image_classification.py # CNN 이미지 분류
-├── 04_rnn_text_classification.py  # RNN 텍스트 분류
-├── 05_lstm_sequence_prediction.py # LSTM 시계열 예측
-├── 06_yolo_object_detection.py    # YOLO 객체 탐지
-├── 07_gan_image_generation.py     # GAN 이미지 생성
-├── 08_transformer_nlp.py          # Transformer NLP
-├── utils/                         # 공통 유틸리티
-│   ├── data_utils.py             # 데이터 처리 함수
-│   ├── model_utils.py            # 모델 관련 함수
-│   └── visualization.py          # 시각화 함수
-├── requirements.txt               # 의존성 목록
-└── README.md                     # 프로젝트 설명
+├── 01_pytorch_basics.py              # PyTorch 기초 실습
+├── 01_pytorch_basics_theory.md       # PyTorch 기초 이론
+├── 02_neural_networks.py             # 신경망 기초 실습
+├── 02_neural_networks_theory.md      # 신경망 기초 이론
+├── 03_cnn_image_classification.py    # CNN 이미지 분류 실습
+├── 03_cnn_theory.md                  # CNN 이론
+├── 04_rnn_text_classification.py     # RNN 텍스트 분류 실습
+├── 04_rnn_theory.md                  # RNN 이론
+├── 05_lstm_sequence_prediction.py    # LSTM 시계열 예측 실습
+├── 05_lstm_theory.md                 # LSTM 이론
+├── 06_yolo_object_detection.py       # YOLO 객체 탐지 실습
+├── 06_yolo_theory.md                 # YOLO 이론
+├── 07_gan_image_generation.py        # GAN 이미지 생성 실습
+├── 07_gan_theory.md                  # GAN 이론
+├── 08_transformer_nlp.py             # Transformer NLP 실습
+├── 08_transformer_theory.md          # Transformer 이론
+├── utils/                            # 공통 유틸리티
+│   ├── data_utils.py                # 데이터 처리 함수
+│   ├── model_utils.py               # 모델 관련 함수
+│   └── visualization.py             # 시각화 함수
+├── requirements.txt                  # 의존성 목록
+└── README.md                        # 프로젝트 설명
 ```
 
 ## 🎯 학습 순서
 
+각 단계마다 **이론 문서를 먼저 읽고** 실습 코드를 실행하는 것을 권장합니다.
+
 ### 기초 과정 (필수)
-1. **01_pytorch_basics.py**: PyTorch 기본 개념 익히기
-2. **02_neural_networks.py**: 신경망 구조와 훈련 과정 이해
+1. **PyTorch 기초**
+   - 📖 `01_pytorch_basics_theory.md` 읽기
+   - 💻 `01_pytorch_basics.py` 실행
+   
+2. **신경망 기초**
+   - 📖 `02_neural_networks_theory.md` 읽기
+   - 💻 `02_neural_networks.py` 실행
 
 ### 중급 과정 (권장)
-3. **03_cnn_image_classification.py**: 이미지 처리를 위한 CNN 학습
-4. **04_rnn_text_classification.py**: 텍스트 처리를 위한 RNN 학습
-5. **05_lstm_sequence_prediction.py**: 시계열 데이터 처리를 위한 LSTM 학습
+3. **CNN 이미지 분류**
+   - 📖 `03_cnn_theory.md` 읽기
+   - 💻 `03_cnn_image_classification.py` 실행
+   
+4. **RNN 텍스트 분류**
+   - 📖 `04_rnn_theory.md` 읽기
+   - 💻 `04_rnn_text_classification.py` 실행
+   
+5. **LSTM 시계열 예측**
+   - 📖 `05_lstm_theory.md` 읽기
+   - 💻 `05_lstm_sequence_prediction.py` 실행
 
 ### 고급 과정 (선택)
-6. **06_yolo_object_detection.py**: 실시간 객체 탐지 시스템
-7. **07_gan_image_generation.py**: 생성적 AI와 이미지 합성
-8. **08_transformer_nlp.py**: 현대 NLP의 핵심 기술
+6. **YOLO 객체 탐지**
+   - 📖 `06_yolo_theory.md` 읽기
+   - 💻 `06_yolo_object_detection.py` 실행
+   
+7. **GAN 이미지 생성**
+   - 📖 `07_gan_theory.md` 읽기
+   - 💻 `07_gan_image_generation.py` 실행
+   
+8. **Transformer NLP**
+   - 📖 `08_transformer_theory.md` 읽기
+   - 💻 `08_transformer_nlp.py` 실행
 
 ## 💡 주요 특징
 
-- **실습 중심**: 이론과 실습이 균형잡힌 구성
+- **이론과 실습의 완벽한 조합**: 각 주제마다 상세한 이론 설명서와 실습 코드 제공
 - **단계별 학습**: 기초부터 최신 기법까지 체계적 진행
-- **상세한 주석**: 코드의 모든 부분에 한국어 설명
+- **상세한 한국어 설명**: 코드와 이론 모든 부분에 한국어 설명
+- **수학적 원리 포함**: 알고리즘의 수학적 배경과 원리 상세 설명
 - **시각화**: 학습 과정과 결과를 그래프로 확인
 - **실용적 예제**: 실제 문제에 적용 가능한 예제
 - **최신 기법**: YOLO, GAN, Transformer 등 최신 딥러닝 기법 포함
+- **용어 정의**: 모든 전문 용어와 파라미터에 대한 명확한 설명
+- **평가 메트릭**: 각 분야별 성능 평가 방법 상세 안내
 
 ## 🔧 문제 해결
 
