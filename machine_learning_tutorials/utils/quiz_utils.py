@@ -45,20 +45,149 @@ class QuizResult:
 class QuizManager:
     """퀴즈 관리 클래스"""
     
-    def __init__(self, quiz_data_path: str = "quiz_data"):
-        self.quiz_data_path = quiz_data_path
-        self.questions: Dict[str, QuizQuestion] = {}
-        self.user_progress: Dict[str, List[QuizResult]] = {}
-        self._ensure_data_directory()
+    def __init__(self, quiz_name: str = "퀴즈"):
+        self.quiz_name = quiz_name
+        self.questions = []
+        self.current_question = 0
+        self.score = 0
+        self.wrong_questions = []
     
-    def _ensure_data_directory(self):
-        """데이터 디렉토리 생성"""
-        if not os.path.exists(self.quiz_data_path):
-            os.makedirs(self.quiz_data_path)
-    
-    def add_question(self, question: QuizQuestion):
+    def add_question(self, question_type: str, question: str, options: list = None, 
+                    correct_answer: str = None, explanation: str = "", difficulty: str = "medium"):
         """퀴즈 문제 추가"""
-        self.questions[question.id] = question
+        question_data = {
+            'type': question_type,
+            'question': question,
+            'options': options,
+            'correct_answer': correct_answer,
+            'explanation': explanation,
+            'difficulty': difficulty
+        }
+        self.questions.append(question_data)
+    
+    def start_quiz(self):
+        """퀴즈 시작"""
+        self.current_question = 0
+        self.score = 0
+        self.wrong_questions = []
+        
+        for i, q in enumerate(self.questions):
+            print(f"\n문제 {i+1}/{len(self.questions)}")
+            print("-" * 40)
+            print(f"문제: {q['question']}")
+            
+            if q['type'] == 'multiple_choice':
+                self._handle_multiple_choice(q, i+1)
+            elif q['type'] == 'matching':
+                self._handle_matching(q, i+1)
+            elif q['type'] == 'short_answer':
+                self._handle_short_answer(q, i+1)
+            
+            self.current_question += 1
+    
+    def _handle_multiple_choice(self, question, question_num):
+        """객관식 문제 처리"""
+        for i, option in enumerate(question['options']):
+            print(f"{chr(65+i)}) {option}")
+        
+        while True:
+            answer = input("\n답을 선택하세요 (A, B, C, D): ").upper().strip()
+            if answer in ['A', 'B', 'C', 'D'] and ord(answer) - 65 < len(question['options']):
+                break
+            print("올바른 선택지를 입력하세요.")
+        
+        is_correct = answer == question['correct_answer']
+        if is_correct:
+            print("✅ 정답입니다!")
+            self.score += 1
+        else:
+            print(f"❌ 틀렸습니다. 정답은 {question['correct_answer']}입니다.")
+            self.wrong_questions.append(f"문제 {question_num}")
+        
+        print(f"\n해설: {question['explanation']}")
+        input("\n계속하려면 Enter를 누르세요...")
+    
+    def _handle_matching(self, question, question_num):
+        """매칭 문제 처리"""
+        print("다음을 매칭하세요:")
+        items = list(question['options'].keys())
+        
+        user_answers = {}
+        for item in items:
+            print(f"\n'{item}'에 해당하는 것은?")
+            choices = question['options'][item]
+            for i, choice in enumerate(choices):
+                print(f"{i+1}) {choice}")
+            
+            while True:
+                try:
+                    answer_idx = int(input("번호를 선택하세요: ")) - 1
+                    if 0 <= answer_idx < len(choices):
+                        user_answers[item] = choices[answer_idx]
+                        break
+                    else:
+                        print("올바른 번호를 입력하세요.")
+                except ValueError:
+                    print("숫자를 입력하세요.")
+        
+        # 채점
+        correct_count = 0
+        total_count = len(items)
+        
+        print(f"\n=== 채점 결과 ===")
+        for item in items:
+            correct = question['correct_answer'][item]
+            user = user_answers[item]
+            if user == correct:
+                print(f"✅ {item}: {user} (정답)")
+                correct_count += 1
+            else:
+                print(f"❌ {item}: {user} → 정답: {correct}")
+        
+        if correct_count == total_count:
+            print("모두 정답입니다!")
+            self.score += 1
+        else:
+            print(f"{correct_count}/{total_count} 정답")
+            self.wrong_questions.append(f"문제 {question_num}")
+        
+        print(f"\n해설: {question['explanation']}")
+        input("\n계속하려면 Enter를 누르세요...")
+    
+    def _handle_short_answer(self, question, question_num):
+        """단답형 문제 처리"""
+        answer = input("\n답을 입력하세요: ").strip()
+        
+        # 간단한 키워드 매칭
+        correct_keywords = question['correct_answer'].lower().split()
+        user_keywords = answer.lower().split()
+        
+        # 주요 키워드가 포함되어 있는지 확인
+        keyword_matches = sum(1 for keyword in correct_keywords if keyword in user_keywords)
+        is_correct = keyword_matches >= len(correct_keywords) * 0.7  # 70% 이상 키워드 일치
+        
+        if is_correct:
+            print("✅ 정답입니다!")
+            self.score += 1
+        else:
+            print(f"❌ 틀렸습니다.")
+            print(f"모범답안: {question['correct_answer']}")
+            self.wrong_questions.append(f"문제 {question_num}")
+        
+        print(f"\n해설: {question['explanation']}")
+        input("\n계속하려면 Enter를 누르세요...")
+    
+    def get_score(self):
+        """점수 반환"""
+        return self.score
+    
+    def get_total_questions(self):
+        """총 문제 수 반환"""
+        return len(self.questions)
+    
+    def get_wrong_questions(self):
+        """틀린 문제 목록 반환"""
+        return self.wrong_questions
     
     def load_questions_from_file(self, filepath: str):
         """파일에서 퀴즈 문제 로드"""
