@@ -172,10 +172,88 @@ def analyze_feature_importance(dt_model, feature_names):
     
     return importances
 
+def manual_impurity_calculation():
+    """불순도 수동 계산 예제"""
+    print("\n" + "=" * 60)
+    print("6. 불순도 수동 계산 예제")
+    print("=" * 60)
+    
+    # 예제 노드: 클래스 A 40개, 클래스 B 60개
+    class_a, class_b = 40, 60
+    total = class_a + class_b
+    p_a, p_b = class_a/total, class_b/total
+    
+    print(f"예제 노드: 클래스 A {class_a}개, 클래스 B {class_b}개 (총 {total}개)")
+    print(f"클래스 비율: p_A = {p_a:.2f}, p_B = {p_b:.2f}")
+    
+    # 지니 불순도 계산
+    gini = 1 - (p_a**2 + p_b**2)
+    print(f"\n지니 불순도:")
+    print(f"Gini = 1 - (p_A² + p_B²)")
+    print(f"     = 1 - ({p_a:.2f}² + {p_b:.2f}²)")
+    print(f"     = 1 - ({p_a**2:.3f} + {p_b**2:.3f})")
+    print(f"     = 1 - {p_a**2 + p_b**2:.3f} = {gini:.3f}")
+    
+    # 엔트로피 계산
+    entropy = -(p_a * np.log2(p_a) + p_b * np.log2(p_b))
+    print(f"\n엔트로피:")
+    print(f"Entropy = -(p_A × log₂(p_A) + p_B × log₂(p_B))")
+    print(f"        = -({p_a:.2f} × {np.log2(p_a):.3f} + {p_b:.2f} × {np.log2(p_b):.3f})")
+    print(f"        = -({p_a * np.log2(p_a):.3f} + {p_b * np.log2(p_b):.3f})")
+    print(f"        = {entropy:.3f}")
+    
+    # 오분류 오차 계산
+    error = 1 - max(p_a, p_b)
+    print(f"\n오분류 오차:")
+    print(f"Error = 1 - max(p_A, p_B)")
+    print(f"      = 1 - max({p_a:.2f}, {p_b:.2f})")
+    print(f"      = 1 - {max(p_a, p_b):.2f} = {error:.3f}")
+    
+    # 시각화
+    plt.figure(figsize=(12, 4))
+    
+    # 불순도 비교
+    plt.subplot(1, 3, 1)
+    measures = ['Gini', 'Entropy', 'Error']
+    values = [gini, entropy, error]
+    colors = ['skyblue', 'lightgreen', 'salmon']
+    bars = plt.bar(measures, values, color=colors, alpha=0.7)
+    plt.ylabel('Impurity Value')
+    plt.title('Impurity Measures Comparison')
+    for bar, value in zip(bars, values):
+        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01, 
+                f'{value:.3f}', ha='center', va='bottom')
+    
+    # 이진 분류에서 불순도 곡선
+    plt.subplot(1, 3, 2)
+    p_range = np.linspace(0.01, 0.99, 100)
+    gini_curve = 2 * p_range * (1 - p_range)
+    entropy_curve = -(p_range * np.log2(p_range) + (1-p_range) * np.log2(1-p_range))
+    error_curve = 1 - np.maximum(p_range, 1-p_range)
+    
+    plt.plot(p_range, gini_curve, label='Gini', linewidth=2)
+    plt.plot(p_range, entropy_curve, label='Entropy', linewidth=2)
+    plt.plot(p_range, error_curve, label='Error', linewidth=2)
+    plt.axvline(x=p_a, color='red', linestyle='--', alpha=0.7, label=f'Current p_A={p_a:.2f}')
+    plt.xlabel('p (Probability of Class A)')
+    plt.ylabel('Impurity')
+    plt.title('Impurity Curves (Binary Classification)')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    
+    # 클래스 분포 시각화
+    plt.subplot(1, 3, 3)
+    plt.pie([class_a, class_b], labels=['Class A', 'Class B'], 
+            autopct='%1.1f%%', colors=['lightblue', 'lightcoral'])
+    plt.title('Class Distribution')
+    
+    plt.tight_layout()
+    plt.show()
+
 def compare_split_criteria(X_train, X_test, y_train, y_test, feature_names):
     """분할 기준 비교 (지니 vs 엔트로피)"""
     print("\n" + "=" * 60)
-    print("6. 분할 기준 비교")
+    print("7. 분할 기준 비교")
     print("=" * 60)
     
     criteria = ['gini', 'entropy']
@@ -230,10 +308,101 @@ def compare_split_criteria(X_train, X_test, y_train, y_test, feature_names):
     
     return results
 
+def demonstrate_xor_problem():
+    """XOR 문제와 상호작용 한계 시연"""
+    print("\n" + "=" * 60)
+    print("8. XOR 문제와 상호작용 한계")
+    print("=" * 60)
+    
+    # XOR 데이터 생성
+    np.random.seed(42)
+    n_samples = 200
+    
+    # XOR 패턴 생성
+    X_xor = np.random.rand(n_samples, 2)
+    y_xor = ((X_xor[:, 0] > 0.5) ^ (X_xor[:, 1] > 0.5)).astype(int)
+    
+    # 노이즈 특성 추가
+    noise_feature = np.random.rand(n_samples, 1)
+    X_xor_with_noise = np.column_stack([X_xor, noise_feature])
+    
+    print("XOR 문제 데이터 생성:")
+    print(f"- 샘플 수: {n_samples}")
+    print(f"- 특성: X1, X2 (XOR 관계), X3 (노이즈)")
+    print(f"- 클래스 분포: {np.bincount(y_xor)}")
+    
+    # 개별 특성의 정보 이득 계산
+    from sklearn.feature_selection import mutual_info_classif
+    
+    mi_scores = mutual_info_classif(X_xor_with_noise, y_xor, random_state=42)
+    feature_names_xor = ['X1 (XOR)', 'X2 (XOR)', 'X3 (Noise)']
+    
+    print(f"\n개별 특성의 상호정보량 (정보 이득과 유사):")
+    for i, (name, score) in enumerate(zip(feature_names_xor, mi_scores)):
+        print(f"  {name}: {score:.4f}")
+    
+    # 의사결정나무로 XOR 문제 해결 시도
+    dt_xor = DecisionTreeClassifier(max_depth=5, random_state=42)
+    dt_xor.fit(X_xor_with_noise, y_xor)
+    
+    accuracy_xor = dt_xor.score(X_xor_with_noise, y_xor)
+    print(f"\n의사결정나무 정확도: {accuracy_xor:.4f}")
+    print(f"트리 깊이: {dt_xor.get_depth()}")
+    
+    # 시각화
+    plt.figure(figsize=(15, 5))
+    
+    # XOR 데이터 분포
+    plt.subplot(1, 3, 1)
+    scatter = plt.scatter(X_xor[:, 0], X_xor[:, 1], c=y_xor, cmap='RdYlBu', alpha=0.7)
+    plt.xlabel('X1')
+    plt.ylabel('X2')
+    plt.title('XOR Problem Data Distribution')
+    plt.colorbar(scatter)
+    
+    # 의사결정나무 결정 경계
+    plt.subplot(1, 3, 2)
+    h = 0.02
+    x_min, x_max = X_xor[:, 0].min() - 0.1, X_xor[:, 0].max() + 0.1
+    y_min, y_max = X_xor[:, 1].min() - 0.1, X_xor[:, 1].max() + 0.1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+    
+    # 노이즈 특성을 평균값으로 고정
+    noise_avg = np.mean(noise_feature)
+    mesh_points = np.c_[xx.ravel(), yy.ravel(), np.full(xx.ravel().shape, noise_avg)]
+    Z = dt_xor.predict(mesh_points)
+    Z = Z.reshape(xx.shape)
+    
+    plt.contourf(xx, yy, Z, alpha=0.4, cmap='RdYlBu')
+    plt.scatter(X_xor[:, 0], X_xor[:, 1], c=y_xor, cmap='RdYlBu', edgecolors='black')
+    plt.xlabel('X1')
+    plt.ylabel('X2')
+    plt.title('Decision Tree Boundary (XOR)')
+    
+    # 특성 중요도
+    plt.subplot(1, 3, 3)
+    importances = dt_xor.feature_importances_
+    bars = plt.bar(feature_names_xor, importances, color=['skyblue', 'lightgreen', 'salmon'], alpha=0.7)
+    plt.ylabel('Feature Importance')
+    plt.title('Feature Importance (XOR Problem)')
+    plt.xticks(rotation=45)
+    for bar, imp in zip(bars, importances):
+        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01, 
+                f'{imp:.3f}', ha='center', va='bottom')
+    
+    plt.tight_layout()
+    plt.show()
+    
+    print("\n관찰 결과:")
+    print("1. XOR 문제에서 개별 특성(X1, X2)의 정보 이득이 낮음")
+    print("2. 의사결정나무가 복잡한 경계를 만들어야 XOR 패턴 학습")
+    print("3. 축 정렬 분할의 한계로 인해 비효율적인 경계 생성")
+    print("4. 상호작용이 중요한 문제에서 탐욕적 분할의 한계 확인")
+
 def hyperparameter_tuning(X_train, X_test, y_train, y_test):
     """하이퍼파라미터 튜닝"""
     print("\n" + "=" * 60)
-    print("7. 하이퍼파라미터 튜닝")
+    print("9. 하이퍼파라미터 튜닝")
     print("=" * 60)
     
     # max_depth 튜닝
@@ -303,7 +472,7 @@ def hyperparameter_tuning(X_train, X_test, y_train, y_test):
 def pruning_analysis(X_train, X_test, y_train, y_test, feature_names, target_names):
     """가지치기 효과 분석"""
     print("\n" + "=" * 60)
-    print("8. 가지치기 효과 분석")
+    print("10. 가지치기 효과 분석")
     print("=" * 60)
     
     # 가지치기 전후 비교
@@ -379,7 +548,7 @@ def pruning_analysis(X_train, X_test, y_train, y_test, feature_names, target_nam
 def decision_boundary_visualization(X, y, feature_names, target_names):
     """결정 경계 시각화 (2D)"""
     print("\n" + "=" * 60)
-    print("9. 결정 경계 시각화")
+    print("11. 결정 경계 시각화")
     print("=" * 60)
     
     # 가장 중요한 두 특성 선택 (sepal length, petal length)
@@ -423,7 +592,7 @@ def decision_boundary_visualization(X, y, feature_names, target_names):
 def cross_validation_analysis(X, y):
     """교차 검증 분석"""
     print("\n" + "=" * 60)
-    print("10. 교차 검증 분석")
+    print("12. 교차 검증 분석")
     print("=" * 60)
     
     # 다양한 설정으로 교차 검증
@@ -492,20 +661,26 @@ def main():
     # 5. 특성 중요도 분석
     importances = analyze_feature_importance(dt_model, feature_names)
     
-    # 6. 분할 기준 비교
+    # 6. 불순도 수동 계산 예제
+    manual_impurity_calculation()
+    
+    # 7. 분할 기준 비교
     criteria_results = compare_split_criteria(X_train, X_test, y_train, y_test, feature_names)
     
-    # 7. 하이퍼파라미터 튜닝
+    # 8. XOR 문제와 상호작용 한계
+    demonstrate_xor_problem()
+    
+    # 9. 하이퍼파라미터 튜닝
     best_depth, best_split = hyperparameter_tuning(X_train, X_test, y_train, y_test)
     
-    # 8. 가지치기 효과 분석
+    # 10. 가지치기 효과 분석
     pruning_results = pruning_analysis(X_train, X_test, y_train, y_test, 
                                      feature_names, target_names)
     
-    # 9. 결정 경계 시각화
+    # 11. 결정 경계 시각화
     decision_boundary_visualization(X, y, feature_names, target_names)
     
-    # 10. 교차 검증 분석
+    # 12. 교차 검증 분석
     cv_results = cross_validation_analysis(X, y)
     
     # 최종 요약
@@ -515,11 +690,13 @@ def main():
     print("1. Iris 데이터셋으로 의사결정나무 모델 구축 완료")
     print("2. 트리 구조 시각화 및 해석 완료")
     print("3. 특성 중요도 분석 완료")
-    print("4. 분할 기준(지니 vs 엔트로피) 비교 완료")
-    print("5. 하이퍼파라미터 튜닝 완료")
-    print("6. 가지치기 효과 분석 완료")
-    print("7. 결정 경계 시각화 완료")
-    print("8. 교차 검증 분석 완료")
+    print("4. 불순도 수동 계산 및 비교 완료")
+    print("5. 분할 기준(지니 vs 엔트로피) 비교 완료")
+    print("6. XOR 문제와 상호작용 한계 시연 완료")
+    print("7. 하이퍼파라미터 튜닝 완료")
+    print("8. 가지치기 효과 분석 완료")
+    print("9. 결정 경계 시각화 완료")
+    print("10. 교차 검증 분석 완료")
     
     print(f"\n주요 결과:")
     print(f"- 가장 중요한 특성: {feature_names[np.argmax(importances)]}")
